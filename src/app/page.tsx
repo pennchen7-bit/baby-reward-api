@@ -10,6 +10,7 @@ interface User {
   role: 'super_admin' | 'admin' | 'parent' | 'baby';
   familyId?: string;
   familyName?: string;
+  familyCode?: string;
 }
 
 interface DrawRequest {
