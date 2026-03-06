@@ -100,7 +100,7 @@ export default function AdminPage() {
       const res = await fetch('/api/users');
       const data = await res.json();
       // 过滤掉 super_admin
-      const filteredUsers = (data.users || []).filter((u: User) => u.role !== 'super_admin');
+      const filteredUsers = (data.users || []).filter((u: User) => (u.role as string) !== 'super_admin');
       setUsers(filteredUsers);
     } catch (error) {
       console.error('Failed to fetch users:', error);
