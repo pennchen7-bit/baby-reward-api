@@ -17,7 +17,7 @@ interface Prize {
 interface User {
   id: string;
   username: string;
-  role: 'admin' | 'parent' | 'baby';
+  role: 'super_admin' | 'admin' | 'parent' | 'baby';
   active: boolean;
   createdAt: string;
 }

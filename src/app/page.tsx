@@ -86,7 +86,7 @@ export default function Home() {
   useEffect(() => {
     if (user?.role === 'admin' || user?.role === 'parent') {
       const interval = setInterval(() => {
-        fetchPendingRequests(user.familyId);
+        fetchPendingRequests();
       }, 3000);
       return () => clearInterval(interval);
     }
