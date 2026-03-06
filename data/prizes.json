@@ -1,0 +1,74 @@
+[
+  {
+    "id": "aebcee34-4dce-49ea-b56e-c626d79e6874",
+    "name": "看电视",
+    "description": "看电视一小时",
+    "points": 0,
+    "imageUrl": null,
+    "probability": 1,
+    "active": true,
+    "createdAt": "2026-03-05T16:05:11.907Z",
+    "updatedAt": "2026-03-05T16:05:11.907Z",
+    "familyId": "family-1772726438287-kant4ql1b"
+  },
+  {
+    "id": "aa0ed38c-38c5-47fc-a025-066a4ace9f61",
+    "name": "玩游戏",
+    "description": "玩我的世界",
+    "points": 0,
+    "imageUrl": null,
+    "probability": 1,
+    "active": true,
+    "createdAt": "2026-03-05T16:05:36.565Z",
+    "updatedAt": "2026-03-05T16:05:36.565Z",
+    "familyId": "family-1772726438287-kant4ql1b"
+  },
+  {
+    "id": "b62a161d-c14e-417a-9546-704c433ac334",
+    "name": "零食一份",
+    "description": "薯片",
+    "points": 0,
+    "imageUrl": null,
+    "probability": 1,
+    "active": true,
+    "createdAt": "2026-03-05T16:05:53.004Z",
+    "updatedAt": "2026-03-05T16:05:53.004Z",
+    "familyId": "family-1772726438287-kant4ql1b"
+  },
+  {
+    "id": "5a59e178-e4a1-4dba-87e7-b94ae0be66b4",
+    "familyId": "family-1772726438287-kant4ql1b",
+    "name": "买玩具",
+    "description": null,
+    "points": 0,
+    "imageUrl": null,
+    "probability": 1,
+    "active": true,
+    "createdAt": "2026-03-06T10:55:04.484Z",
+    "updatedAt": "2026-03-06T10:55:04.484Z"
+  },
+  {
+    "id": "0f4ae893-902a-4099-8653-440d05642d36",
+    "familyId": "family-1772726438287-kant4ql1b",
+    "name": "玩手机游戏",
+    "description": null,
+    "points": 0,
+    "imageUrl": null,
+    "probability": 1,
+    "active": true,
+    "createdAt": "2026-03-06T10:55:36.651Z",
+    "updatedAt": "2026-03-06T10:55:36.651Z"
+  },
+  {
+    "id": "dec0d799-3a00-4bec-a21a-123c69cad2ce",
+    "familyId": "family-1772726438287-kant4ql1b",
+    "name": "看课外读物",
+    "description": null,
+    "points": 0,
+    "imageUrl": null,
+    "probability": 1,
+    "active": true,
+    "createdAt": "2026-03-06T10:55:49.004Z",
+    "updatedAt": "2026-03-06T10:55:49.004Z"
+  }
+]

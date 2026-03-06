@@ -1,0 +1,173 @@
+[
+  {
+    "id": "e4f3fa0f-6ce9-4a6b-abc7-82152696295a",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-05T15:58:59.351Z"
+  },
+  {
+    "id": "a0b7f2ed-8a63-4570-8cd3-55478927833b",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-05T15:58:59.425Z"
+  },
+  {
+    "id": "74577a2e-69f3-4846-8ed6-cd9228b21a66",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-05T16:04:07.145Z"
+  },
+  {
+    "id": "69d8b065-5b52-47e8-b061-98babd5691ff",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-05T16:04:07.209Z"
+  },
+  {
+    "id": "635bd6e7-aaf4-4516-803c-64035184a121",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-06T03:25:10.957Z"
+  },
+  {
+    "id": "95cb2489-ccb3-4fc0-bd5e-f9e3103457fe",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-06T03:25:11.048Z"
+  },
+  {
+    "id": "f3acc04b-b1a0-4341-9be3-3828ec7d2dab",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-06T09:29:53.550Z"
+  },
+  {
+    "id": "88d41973-23b4-4cd8-94ff-a6e903a0fec0",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-06T09:29:53.680Z"
+  },
+  {
+    "id": "b41d6099-ddd5-4187-b59b-4f1bb2ceaca9",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 6,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":1,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:02:17.367Z"
+  },
+  {
+    "id": "18d6de77-3b9e-401e-bd26-20888d8821b6",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 6,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":1,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:02:17.526Z"
+  },
+  {
+    "id": "30180f56-f6ce-4c68-9d0d-fd391130fa5f",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 6,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":1,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:02:21.769Z"
+  },
+  {
+    "id": "aa48cf11-be8a-43c2-9907-d5df85698c94",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 6,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":1,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:02:21.845Z"
+  },
+  {
+    "id": "1ee6d6fe-2f30-49e6-9574-f6d05105e0d2",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 6,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":1,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:02:26.936Z"
+  },
+  {
+    "id": "c43b5ea1-f6c2-4c5f-9fc8-3b99c3646d1a",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 6,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":1,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:03:49.236Z"
+  },
+  {
+    "id": "28adac18-5574-44fa-9212-e031466d1416",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 6,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":1,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:03:49.317Z"
+  },
+  {
+    "id": "c6f8b86e-4a29-4dbc-9a1d-a884dc26bdab",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 7,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:09:47.649Z"
+  },
+  {
+    "id": "70b367d0-e5e6-4f37-b3e8-5c94efebd2aa",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 7,
+    "prizesJson": "[{\"name\":\"看电视\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"零食一份\",\"count\":3,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:09:47.728Z"
+  },
+  {
+    "id": "f979c27b-73b2-43e4-8d16-2813fb11fa28",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 8,
+    "prizesJson": "[{\"name\":\"零食一份\",\"count\":4,\"points\":0,\"imageUrl\":null},{\"name\":\"看电视\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:29:27.088Z"
+  },
+  {
+    "id": "fa448f6c-9e54-4542-b33c-ed98435e8739",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 8,
+    "prizesJson": "[{\"name\":\"零食一份\",\"count\":4,\"points\":0,\"imageUrl\":null},{\"name\":\"看电视\",\"count\":2,\"points\":0,\"imageUrl\":null},{\"name\":\"玩游戏\",\"count\":2,\"points\":0,\"imageUrl\":null}]",
+    "createdAt": "2026-03-06T11:29:27.185Z"
+  }
+]

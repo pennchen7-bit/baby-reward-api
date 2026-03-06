@@ -1,0 +1,38 @@
+{
+  "name": "baby-reward",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@prisma/client": "^5.17.0",
+    "prisma": "^5.17.0",
+    "date-fns": "^3.6.0",
+    "uuid": "^10.0.0",
+    "bcryptjs": "^2.4.3",
+    "@types/bcryptjs": "^2.4.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "@types/node": "^22.1.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/uuid": "^10.0.0",
+    "tailwindcss": "^3.4.7",
+    "postcss": "^8.4.41",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.5",
+    "tsx": "^4.17.0"
+  }
+}

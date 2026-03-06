@@ -1,0 +1,37 @@
+[
+  {
+    "id": "user-admin",
+    "familyId": "family-default",
+    "username": "admin",
+    "password": "admin123",
+    "role": "admin",
+    "active": true,
+    "createdAt": "2026-03-05T00:00:00.000Z"
+  },
+  {
+    "id": "user-parent1",
+    "familyId": "family-default",
+    "username": "爸爸",
+    "password": "123456",
+    "role": "parent",
+    "active": true,
+    "createdAt": "2026-03-05T00:00:00.000Z"
+  },
+  {
+    "id": "user-baby1",
+    "familyId": "family-default",
+    "username": "yinuo",
+    "password": "0608",
+    "role": "baby",
+    "active": true,
+    "createdAt": "2026-03-05T00:00:00.000Z"
+  },
+  {
+    "username": "测试宝宝",
+    "password": "888888",
+    "role": "baby",
+    "active": true,
+    "id": "user-1772723757038",
+    "createdAt": "2026-03-05T15:15:57.038Z"
+  }
+]

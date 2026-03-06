@@ -1,0 +1,92 @@
+[
+  {
+    "id": "d100b4ba-3079-4fa0-a5fa-c5d86029ec98",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 1,
+    "prizesJson": "[{\"name\":\"冰淇淋\",\"count\":1,\"points\":15,\"imageUrl\":\"🍦\"}]",
+    "createdAt": "2026-03-05T14:25:17.664Z"
+  },
+  {
+    "id": "ea1ad70d-3375-4881-ac37-43e40daec5c9",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 1,
+    "prizesJson": "[{\"name\":\"冰淇淋\",\"count\":1,\"points\":15,\"imageUrl\":\"🍦\"}]",
+    "createdAt": "2026-03-05T14:25:17.668Z"
+  },
+  {
+    "id": "3bb7df73-eef9-4827-a37e-d9597fba330c",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 2,
+    "prizesJson": "[{\"name\":\"小零食一份\",\"count\":1,\"points\":5,\"imageUrl\":\"🍪\"},{\"name\":\"冰淇淋\",\"count\":1,\"points\":15,\"imageUrl\":\"🍦\"}]",
+    "createdAt": "2026-03-05T14:27:07.766Z"
+  },
+  {
+    "id": "10074543-b218-4b8a-b0ad-ce8f68457c19",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 2,
+    "prizesJson": "[{\"name\":\"小零食一份\",\"count\":1,\"points\":5,\"imageUrl\":\"🍪\"},{\"name\":\"冰淇淋\",\"count\":1,\"points\":15,\"imageUrl\":\"🍦\"}]",
+    "createdAt": "2026-03-05T14:27:07.790Z"
+  },
+  {
+    "id": "de9d2c59-5020-4f48-936e-d031625dd8a4",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 2,
+    "prizesJson": "[{\"name\":\"小零食一份\",\"count\":1,\"points\":5,\"imageUrl\":\"🍪\"},{\"name\":\"冰淇淋\",\"count\":1,\"points\":15,\"imageUrl\":\"🍦\"}]",
+    "createdAt": "2026-03-05T14:27:24.235Z"
+  },
+  {
+    "id": "57836216-0506-4c1e-af5a-a6276cfa9555",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 2,
+    "prizesJson": "[{\"name\":\"小零食一份\",\"count\":1,\"points\":5,\"imageUrl\":\"🍪\"},{\"name\":\"冰淇淋\",\"count\":1,\"points\":15,\"imageUrl\":\"🍦\"}]",
+    "createdAt": "2026-03-05T14:27:26.404Z"
+  },
+  {
+    "id": "37e09b45-df8d-4d0d-b93d-b3f5c8226b03",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-05T15:11:07.686Z"
+  },
+  {
+    "id": "043fb5d3-2f05-43dd-8d05-8aa7df856463",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-05T15:11:07.772Z"
+  },
+  {
+    "id": "ca06d1ef-b03a-41a0-ae1c-b95b77336339",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-05T15:29:22.368Z"
+  },
+  {
+    "id": "12b58ff6-90d6-495d-bf48-498695b7b7fd",
+    "type": "weekly",
+    "startDate": "2026-03-02T00:00:00.000Z",
+    "endDate": "2026-03-08T23:59:59.999Z",
+    "totalDraws": 0,
+    "prizesJson": "[]",
+    "createdAt": "2026-03-05T15:29:22.431Z"
+  }
+]

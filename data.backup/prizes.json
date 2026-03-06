@@ -1,0 +1,8 @@
+[
+  {"id":"prize-1","familyId":"family-default","name":"额外看动画片 15 分钟","description":"可以多看一集动画片！","points":10,"imageUrl":"📺","probability":2,"active":true,"createdAt":"2026-03-05T00:00:00.000Z","updatedAt":"2026-03-05T00:00:00.000Z"},
+  {"id":"prize-2","familyId":"family-default","name":"小零食一份","description":"选择你喜欢的零食！","points":5,"imageUrl":"🍪","probability":2,"active":true,"createdAt":"2026-03-05T00:00:00.000Z","updatedAt":"2026-03-05T00:00:00.000Z"},
+  {"id":"prize-3","familyId":"family-default","name":"去公园玩","description":"周末去公园玩！","points":20,"imageUrl":"🌳","probability":1,"active":true,"createdAt":"2026-03-05T00:00:00.000Z","updatedAt":"2026-03-05T00:00:00.000Z"},
+  {"id":"prize-4","familyId":"family-default","name":"新玩具","description":"挑选一个玩具！","points":50,"imageUrl":"🧸","probability":0.5,"active":true,"createdAt":"2026-03-05T00:00:00.000Z","updatedAt":"2026-03-05T00:00:00.000Z"},
+  {"id":"prize-5","familyId":"family-default","name":"睡前故事多讲一个","description":"今晚多听一个故事！","points":5,"imageUrl":"📚","probability":3,"active":true,"createdAt":"2026-03-05T00:00:00.000Z","updatedAt":"2026-03-05T00:00:00.000Z"},
+  {"id":"prize-6","familyId":"family-default","name":"冰淇淋","description":"美味的冰淇淋！","points":15,"imageUrl":"🍦","probability":1.5,"active":true,"createdAt":"2026-03-05T00:00:00.000Z","updatedAt":"2026-03-05T00:00:00.000Z"}
+]

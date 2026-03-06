@@ -1,0 +1,544 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [mode, setMode] = useState<'login' | 'register' | 'join'>('login');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [familyName, setFamilyName] = useState('');
+  const [familyCode, setFamilyCode] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [families, setFamilies] = useState<Array<{ id: string; name: string }>>([]);
+  const [selectedFamily, setSelectedFamily] = useState('');
+  const [showFamilyCodeInput, setShowFamilyCodeInput] = useState(false);
+  const [pendingUsername, setPendingUsername] = useState('');
+  const [pendingPassword, setPendingPassword] = useState('');
+
+  useEffect(() => {
+    // 从 localStorage 读取上次登录的用户名
+    const savedUsername = localStorage.getItem('last_username') || '';
+    if (savedUsername) {
+      setUsername(savedUsername);
+    }
+    
+    fetchFamilies();
+  }, []);
+
+  const fetchFamilies = async () => {
+    try {
+      const res = await fetch('/api/families');
+      if (res.ok) {
+        const data = await res.json();
+        setFamilies(data.families || []);
+      }
+    } catch (error) {
+      console.error('Fetch families error:', error);
+    }
+  };
+
+  const checkUsernameAndLogin = async (user: string, pass: string, savedFamilyId?: string) => {
+    // 先检查用户名是否需要家庭码
+    try {
+      const checkRes = await fetch('/api/auth/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user }),
+      });
+      
+      if (checkRes.ok) {
+        const checkData = await checkRes.json();
+        
+        if (!checkData.userExists) {
+          // 用户名不存在
+          setError('用户名不存在');
+          setLoading(false);
+          return;
+        }
+        
+        if (checkData.requiresFamilyCode) {
+          // 需要家庭码
+          setPendingUsername(user);
+          setPendingPassword(pass);
+          setShowFamilyCodeInput(true);
+          setLoading(false);
+          return;
+        }
+        
+        // 不需要家庭码，直接登录
+        if (checkData.familyId) {
+          // 保存到 localStorage
+          localStorage.setItem('last_family_id', checkData.familyId);
+        }
+        
+        await doLogin(user, pass, checkData.familyId);
+      }
+    } catch (err) {
+      console.error('Check username error:', err);
+      // 检查失败，直接尝试登录
+      await doLogin(user, pass, savedFamilyId);
+    }
+  };
+
+  const doLogin = async (user: string, pass: string, familyId?: string) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          username: user, 
+          password: pass,
+          familyId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // 保存用户名到 localStorage
+        localStorage.setItem('last_username', data.user.username);
+        if (data.user.familyId) {
+          localStorage.setItem('last_family_id', data.user.familyId);
+        }
+        
+        router.push('/');
+        router.refresh();
+      } else {
+        setError(data.error || '登录失败');
+      }
+    } catch (err) {
+      setError('网络错误，请重试');
+    } finally {
+      setLoading(false);
+      // 清空密码
+      setPassword('');
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    // 检查是否有上次登录的 familyId
+    const lastFamilyId = localStorage.getItem('last_family_id') || undefined;
+    
+    await checkUsernameAndLogin(username, password, lastFamilyId);
+  };
+
+  const handleFamilyCodeSubmit = async () => {
+    if (!familyCode.trim()) {
+      setError('请输入家庭码');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      // 先验证家庭码
+      const verifyRes = await fetch('/api/families/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ familyCode: familyCode.trim() }),
+      });
+
+      if (!verifyRes.ok) {
+        const errData = await verifyRes.json();
+        setError(errData.error || '家庭码无效');
+        setLoading(false);
+        return;
+      }
+
+      const verifyData = await verifyRes.json();
+      
+      // 用家庭 ID 登录
+      await doLogin(pendingUsername, pendingPassword, verifyData.family.id);
+    } catch (err) {
+      setError('网络错误，请重试');
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ familyName, username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // 注册成功，保存家庭信息
+        localStorage.setItem('last_username', data.user.username);
+        localStorage.setItem('last_family_id', data.family.id);
+        localStorage.setItem('last_family_code', data.family.familyCode);
+        
+        // 显示家庭码提示
+        setError('');
+        alert(`🎉 注册成功！\n\n你的家庭码是：${data.family.familyCode}\n\n请记好这个码，家人可以用它加入你的家庭！`);
+        
+        router.push('/');
+        router.refresh();
+      } else {
+        setError(data.error || '注册失败');
+      }
+    } catch (err) {
+      setError('网络错误，请重试');
+    } finally {
+      setLoading(false);
+      setPassword('');
+    }
+  };
+
+  const handleJoinFamily = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ familyCode, username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('last_username', data.user.username);
+        localStorage.setItem('last_family_id', data.family.id);
+        localStorage.setItem('last_family_code', data.family.familyCode);
+        
+        router.push('/');
+        router.refresh();
+      } else {
+        setError(data.error || '加入失败');
+      }
+    } catch (err) {
+      setError('网络错误，请重试');
+    } finally {
+      setLoading(false);
+      setPassword('');
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8 w-full max-w-md">
+        {/* 标题 */}
+        <h1 className="text-2xl sm:text-3xl font-bold text-purple-600 text-center mb-2">
+          🎁 宝宝奖励计划
+        </h1>
+        <p className="text-center text-gray-600 text-sm sm:text-base mb-6">
+          {mode === 'login' ? '欢迎回来' : mode === 'register' ? '创建新家庭' : '加入已有家庭'}
+        </p>
+
+        {/* 模式切换 */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => { setMode('login'); setError(''); setShowFamilyCodeInput(false); }}
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+              mode === 'login'
+                ? 'bg-purple-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            登录
+          </button>
+          <button
+            onClick={() => { setMode('register'); setError(''); setShowFamilyCodeInput(false); }}
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+              mode === 'register'
+                ? 'bg-purple-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            注册
+          </button>
+          <button
+            onClick={() => { setMode('join'); setError(''); setShowFamilyCodeInput(false); }}
+            className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+              mode === 'join'
+                ? 'bg-purple-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            加入
+          </button>
+        </div>
+
+        {error && !showFamilyCodeInput && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        {mode === 'login' ? (
+          /* 登录表单 */
+          <>
+            {showFamilyCodeInput ? (
+              <div className="space-y-4">
+                <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg text-sm">
+                  🔐 检测到多个家庭有相同用户名，请输入家庭码
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    家庭码
+                  </label>
+                  <input
+                    type="text"
+                    value={familyCode}
+                    onChange={(e) => setFamilyCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base text-center tracking-widest"
+                    placeholder="8888"
+                    maxLength={4}
+                    autoFocus
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    4 位数字，向家庭管理员获取
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { setShowFamilyCodeInput(false); setError(''); }}
+                    className="flex-1 py-3 px-4 rounded-lg bg-gray-100 text-gray-700 font-semibold transition text-sm sm:text-base hover:bg-gray-200"
+                  >
+                    返回
+                  </button>
+                  <button
+                    onClick={handleFamilyCodeSubmit}
+                    disabled={loading || familyCode.length !== 4}
+                    className={`flex-1 py-3 px-4 rounded-lg text-white font-semibold transition text-sm sm:text-base ${
+                      loading || familyCode.length !== 4
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+                    }`}
+                  >
+                    {loading ? '验证中...' : '登录'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    用户名
+                  </label>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
+                    placeholder="输入用户名"
+                    required
+                    autoComplete="username"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    密码
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
+                    placeholder="输入密码"
+                    required
+                    autoComplete="current-password"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full py-3 px-4 rounded-lg text-white font-semibold transition text-sm sm:text-base ${
+                    loading
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+                  }`}
+                >
+                  {loading ? '登录中...' : '登录'}
+                </button>
+              </form>
+            )}
+          </>
+        ) : (
+          /* 注册表单 */
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                🏠 家庭名称
+              </label>
+              <input
+                type="text"
+                value={familyName}
+                onChange={(e) => setFamilyName(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
+                placeholder="例如：幸福小家"
+                required
+                autoFocus
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                创建后您将担任该家庭的管理员
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                用户名
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
+                placeholder="设置用户名"
+                required
+                autoComplete="username"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                密码
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
+                placeholder="至少 6 位"
+                required
+                minLength={6}
+                autoComplete="new-password"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 px-4 rounded-lg text-white font-semibold transition text-sm sm:text-base ${
+                loading
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+              }`}
+            >
+              {loading ? '注册中...' : '注册'}
+            </button>
+          </form>
+        ) : mode === 'join' ? (
+          /* 加入家庭表单 */
+          <form onSubmit={handleJoinFamily} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                🔑 家庭码
+              </label>
+              <input
+                type="text"
+                value={familyCode}
+                onChange={(e) => setFamilyCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base text-center tracking-widest"
+                placeholder="8888"
+                maxLength={4}
+                required
+                autoFocus
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                4 位数字，向家庭管理员获取
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                用户名
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
+                placeholder="设置用户名"
+                required
+                autoComplete="username"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                密码
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
+                placeholder="至少 6 位"
+                required
+                minLength={6}
+                autoComplete="new-password"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 px-4 rounded-lg text-white font-semibold transition text-sm sm:text-base ${
+                loading
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+              }`}
+            >
+              {loading ? '加入中...' : '加入家庭'}
+            </button>
+          </form>
+        )}
+
+        {/* 提示信息 */}
+        {mode === 'login' && (
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <p className="text-xs sm:text-sm text-gray-600 mb-2">💡 首次使用？</p>
+            <ol className="text-xs text-gray-500 space-y-1 list-decimal list-inside">
+              <li>切换到"注册"标签</li>
+              <li>输入家庭名称、用户名和密码</li>
+              <li>注册成功后会获得家庭码</li>
+              <li>在管理后台添加家长和宝宝账户</li>
+            </ol>
+            <p className="text-xs text-gray-400 mt-3 pt-3 border-t">
+              🔐 超级管理员：admin / admin123（可管理所有家庭）
+            </p>
+          </div>
+        )}
+
+        {mode === 'join' && (
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <p className="text-xs sm:text-sm text-gray-600 mb-2">🏠 加入已有家庭</p>
+            <ol className="text-xs text-gray-500 space-y-1 list-decimal list-inside">
+              <li>向家庭管理员获取家庭码</li>
+              <li>输入家庭码、用户名和密码</li>
+              <li>加入成功后即可参与抽奖</li>
+            </ol>
+          </div>
+        )}
+
+        <div className="mt-4 text-center">
+          <Link href="/" className="text-purple-600 hover:text-purple-700 text-sm">
+            ← 返回首页
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
+}

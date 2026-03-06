@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Prize {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  points      Int      @default(0)
+  imageUrl    String?
+  probability Float    @default(1.0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
+  
+  drawRecords DrawRecord[]
+}
+
+model DrawRecord {
+  id        String   @id @default(uuid())
+  prizeId   String
+  prize     Prize    @relation(fields: [prizeId], references: [id])
+  drawnAt   DateTime @default(now())
+  week      Int
+  month     Int
+  quarter   Int
+  year      Int
+  notes     String?
+}
+
+model Report {
+  id        String   @id @default(uuid())
+  type      String   // weekly, monthly, quarterly, yearly
+  startDate DateTime
+  endDate   DateTime
+  totalDraws Int
+  prizesJson String
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "4ac55ffb-25ec-4397-984f-2e828ea253f7",
+    "prizeId": "prize-6",
+    "drawnAt": "2026-03-05T14:24:24.502Z",
+    "week": 10,
+    "month": 3,
+    "quarter": 1,
+    "year": 2026,
+    "notes": null
+  },
+  {
+    "id": "fcdb6fde-1a38-4237-b03f-0496fb446b17",
+    "prizeId": "prize-2",
+    "drawnAt": "2026-03-05T14:26:41.292Z",
+    "week": 10,
+    "month": 3,
+    "quarter": 1,
+    "year": 2026,
+    "notes": null
+  },
+  {
+    "id": "1f49c87e-f802-4efa-a4d4-54b5bdf6c255",
+    "prizeId": "prize-6",
+    "drawnAt": "2026-03-05T14:59:02.206Z",
+    "week": 10,
+    "month": 3,
+    "quarter": 1,
+    "year": 2026,
+    "notes": null
+  },
+  {
+    "id": "f2cf226c-304a-49a7-87f2-9030adb97072",
+    "prizeId": "prize-2",
+    "drawnAt": "2026-03-05T14:59:07.763Z",
+    "week": 10,
+    "month": 3,
+    "quarter": 1,
+    "year": 2026,
+    "notes": null
+  },
+  {
+    "id": "1162c0fd-b73c-4048-907a-f036e0d5983f",
+    "prizeId": "prize-6",
+    "drawnAt": "2026-03-05T15:02:11.004Z",
+    "week": 10,
+    "month": 3,
+    "quarter": 1,
+    "year": 2026,
+    "notes": null
+  },
+  {
+    "id": "record-1772723779977",
+    "familyId": "family-default",
+    "babyId": "user-1772723757038",
+    "babyName": "测试宝宝",
+    "prizeId": "prize-1",
+    "prizeName": "额外看动画片 15 分钟",
+    "points": 10,
+    "requestId": "request-1772723761616",
+    "drawnAt": "2026-03-05T15:16:19.977Z",
+    "week": 10,
+    "month": 3,
+    "quarter": 1,
+    "year": 2026
+  }
+]

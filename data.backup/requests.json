@@ -1,0 +1,44 @@
+[
+  {
+    "familyId": "family-default",
+    "babyId": "user-1772723757038",
+    "babyName": "测试宝宝",
+    "status": "completed",
+    "id": "request-1772723761616",
+    "createdAt": "2026-03-05T15:16:01.616Z",
+    "approvedBy": "user-parent1",
+    "approvedAt": "2026-03-05T15:16:08.461Z"
+  },
+  {
+    "familyId": "family-default",
+    "babyId": "user-baby1",
+    "babyName": "yinuo",
+    "status": "approved",
+    "id": "request-1772724214335",
+    "createdAt": "2026-03-05T15:23:34.335Z",
+    "approvedBy": "user-parent1",
+    "approvedByName": "爸爸",
+    "reason": "今天表现很棒，作业完成了！",
+    "approvedAt": "2026-03-05T15:27:34.538Z"
+  },
+  {
+    "familyId": "family-default",
+    "babyId": "user-baby1",
+    "babyName": "yinuo",
+    "status": "rejected",
+    "id": "request-1772724454551",
+    "createdAt": "2026-03-05T15:27:34.551Z",
+    "approvedBy": "user-parent1",
+    "approvedByName": "爸爸",
+    "reason": "今天不乖，先写作业",
+    "approvedAt": "2026-03-05T15:27:34.579Z"
+  },
+  {
+    "familyId": "family-default",
+    "babyId": "user-baby1",
+    "babyName": "yinuo",
+    "status": "pending",
+    "id": "request-1772724566270",
+    "createdAt": "2026-03-05T15:29:26.270Z"
+  }
+]
