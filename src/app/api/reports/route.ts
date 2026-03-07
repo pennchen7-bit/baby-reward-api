@@ -85,12 +85,13 @@ export async function GET(request: Request) {
 
     const report = {
       id: uuidv4(),
+      familyId: null,
       type,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
+      startDate,
+      endDate,
       totalDraws,
       prizesJson: JSON.stringify(Object.values(prizeStats)),
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
 
     await saveReport(report);

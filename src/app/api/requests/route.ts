@@ -60,6 +60,10 @@ export async function POST(request: Request) {
       babyId,
       babyName: baby.username,
       status: 'pending',
+      approvedBy: null,
+      approvedByName: null,
+      reason: null,
+      approvedAt: null,
     });
 
     return NextResponse.json({

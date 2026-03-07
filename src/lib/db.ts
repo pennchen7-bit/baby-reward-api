@@ -1,78 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Family, User, Prize, DrawRequest, DrawRecord, Report } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-// 类型定义（从 Prisma 生成）
-export type Family = {
-  id: string;
-  name: string;
-  familyCode: string;
-  createdAt: string;
-};
-
-export type User = {
-  id: string;
-  familyId: string;
-  username: string;
-  passwordHash: string;
-  role: 'super_admin' | 'admin' | 'parent' | 'baby';
-  active: boolean;
-  createdAt: string;
-};
-
-export type Prize = {
-  id: string;
-  familyId?: string | null;
-  name: string;
-  description: string | null;
-  points: number;
-  imageUrl: string | null;
-  probability: number;
-  active: boolean;
-  createdAt: string | Date;
-  updatedAt: string | Date;
-};
-
-export type DrawRequest = {
-  id: string;
-  familyId: string;
-  babyId: string;
-  babyName: string;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
-  approvedBy?: string | null;
-  approvedByName?: string | null;
-  reason?: string | null;
-  createdAt: Date;
-  approvedAt?: Date | null;
-};
-
-export type DrawRecord = {
-  id: string;
-  familyId: string;
-  babyId: string;
-  babyName: string;
-  prizeId: string;
-  prizeName: string;
-  points: number;
-  requestId?: string | null;
-  drawnAt: string | Date;
-  week: number;
-  month: number;
-  quarter: number;
-  year: number;
-};
-
-export type Report = {
-  id: string;
-  familyId?: string | null;
-  type: string;
-  startDate: string | Date;
-  endDate: string | Date;
-  totalDraws: number;
-  prizesJson: string;
-  createdAt: string | Date;
-};
+// 导出 Prisma 类型供其他模块使用
+export type { Family, User, Prize, DrawRequest, DrawRecord, Report };
 
 // 密码哈希（bcrypt）
 const BCRYPT_SALT_ROUNDS = 10;
@@ -317,7 +249,7 @@ export async function getDrawRecords(familyId?: string, babyId?: string, limit =
   });
 }
 
-export async function saveDrawRecord(record: Omit<DrawRecord, 'drawnAt'> & { drawnAt?: string | Date }): Promise<void> {
+export async function saveDrawRecord(record: Omit<DrawRecord, 'id' | 'drawnAt'> & { drawnAt?: string | Date }): Promise<void> {
   await prisma.drawRecord.create({
     data: {
       familyId: record.familyId,

@@ -39,7 +39,7 @@ export async function GET(request: Request) {
         babyName: record.babyName,
         prizeName: prize.name,
         prizeDescription: prize.description,
-        points: prize.points || record.points,
+        points: prize.points,
         imageUrl: prize.imageUrl,
         drawnAt: record.drawnAt,
       };

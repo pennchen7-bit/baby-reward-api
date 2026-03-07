@@ -57,7 +57,7 @@ export async function PUT(
       approvedBy,
       approvedByName,
       reason,
-      approvedAt: status === 'approved' || status === 'rejected' ? new Date().toISOString() : undefined,
+      approvedAt: status === 'approved' || status === 'rejected' ? new Date() : undefined,
     });
 
     return NextResponse.json({

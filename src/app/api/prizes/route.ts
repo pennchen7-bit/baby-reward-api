@@ -42,8 +42,8 @@ export async function POST(request: Request) {
       imageUrl: imageUrl || null,
       probability: probability || 1.0,
       active: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     await savePrize(prize);
@@ -81,7 +81,7 @@ export async function PUT(request: Request) {
       imageUrl: imageUrl !== undefined ? imageUrl : existing.imageUrl,
       probability: probability !== undefined ? probability : existing.probability,
       active: active !== undefined ? active : existing.active,
-      updatedAt: new Date().toISOString(),
+      updatedAt: new Date(),
     };
 
     await savePrize(prize);
