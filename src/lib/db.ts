@@ -1,26 +1,17 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
+const prisma = new PrismaClient();
 
-// 文件路径
-const FAMILIES_FILE = path.join(DATA_DIR, 'families.json');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-const PRIZES_FILE = path.join(DATA_DIR, 'prizes.json');
-const REQUESTS_FILE = path.join(DATA_DIR, 'requests.json');
-const RECORDS_FILE = path.join(DATA_DIR, 'records.json');
-const REPORTS_FILE = path.join(DATA_DIR, 'reports.json');
-
-// 类型定义
-export interface Family {
+// 类型定义（从 Prisma 生成）
+export type Family = {
   id: string;
   name: string;
-  familyCode: string;  // 4 位数字家庭码
+  familyCode: string;
   createdAt: string;
-}
+};
 
-export interface User {
+export type User = {
   id: string;
   familyId: string;
   username: string;
@@ -28,35 +19,35 @@ export interface User {
   role: 'super_admin' | 'admin' | 'parent' | 'baby';
   active: boolean;
   createdAt: string;
-}
+};
 
-export interface Prize {
+export type Prize = {
   id: string;
-  familyId?: string;  // 可选，兼容旧数据
+  familyId?: string | null;
   name: string;
   description: string | null;
   points: number;
   imageUrl: string | null;
   probability: number;
   active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-export interface DrawRequest {
+export type DrawRequest = {
   id: string;
   familyId: string;
   babyId: string;
   babyName: string;
   status: 'pending' | 'approved' | 'rejected' | 'completed';
-  approvedBy?: string;
-  approvedByName?: string;
-  reason?: string;
-  createdAt: string;
-  approvedAt?: string;
-}
+  approvedBy?: string | null;
+  approvedByName?: string | null;
+  reason?: string | null;
+  createdAt: Date;
+  approvedAt?: Date | null;
+};
 
-export interface DrawRecord {
+export type DrawRecord = {
   id: string;
   familyId: string;
   babyId: string;
@@ -64,48 +55,24 @@ export interface DrawRecord {
   prizeId: string;
   prizeName: string;
   points: number;
-  requestId?: string;
-  drawnAt: string;
+  requestId?: string | null;
+  drawnAt: Date;
   week: number;
   month: number;
   quarter: number;
   year: number;
-}
+};
 
-export interface Report {
+export type Report = {
   id: string;
-  familyId?: string;  // 可选，兼容旧数据
+  familyId?: string | null;
   type: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   totalDraws: number;
   prizesJson: string;
-  createdAt: string;
-}
-
-// 工具函数
-async function ensureDataDir() {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  } catch (e) {
-    // Directory might already exist
-  }
-}
-
-async function readJson<T>(file: string, defaultVal: T): Promise<T> {
-  try {
-    await ensureDataDir();
-    const content = await fs.readFile(file, 'utf-8');
-    return JSON.parse(content);
-  } catch (e) {
-    return defaultVal;
-  }
-}
-
-async function writeJson<T>(file: string, data: T): Promise<void> {
-  await ensureDataDir();
-  await fs.writeFile(file, JSON.stringify(data, null, 2));
-}
+  createdAt: Date;
+};
 
 // 密码哈希（bcrypt）
 const BCRYPT_SALT_ROUNDS = 10;
@@ -116,140 +83,100 @@ export function hashPassword(password: string): string {
 
 export function verifyPassword(password: string, hash: string): boolean {
   try {
-    // 检查是否是旧版 SHA256 哈希（64 位十六进制）
     if (hash && hash.length === 64 && /^[a-f0-9]+$/i.test(hash)) {
-      // 旧版哈希，用 SHA256 验证（用于无感升级）
       const crypto = require('crypto');
       const oldHash = crypto.createHash('sha256').update(password).digest('hex');
       return oldHash === hash;
     }
-    // 新版 bcrypt 哈希
     return bcrypt.compareSync(password, hash);
   } catch (e) {
     return false;
   }
 }
 
-// 升级旧密码哈希到 bcrypt
 export async function upgradePasswordHash(userId: string, password: string): Promise<void> {
-  const users = await getUsers();
-  const index = users.findIndex((u) => u.id === userId);
-  if (index === -1) return;
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) return;
   
-  const user = users[index];
-  // 检查是否是旧版哈希
   if (user.passwordHash && user.passwordHash.length === 64 && /^[a-f0-9]+$/i.test(user.passwordHash)) {
-    // 升级到 bcrypt
-    users[index].passwordHash = hashPassword(password);
-    await writeJson(USERS_FILE, users);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: hashPassword(password) },
+    });
     console.log(`✓ 用户 ${user.username} 密码哈希已升级到 bcrypt`);
   }
 }
 
 // Family 操作
 export async function getFamilies(): Promise<Family[]> {
-  return readJson<Family[]>(FAMILIES_FILE, []);
+  return prisma.family.findMany();
 }
 
 export async function getFamilyById(id: string): Promise<Family | null> {
-  const families = await getFamilies();
-  return families.find((f) => f.id === id) || null;
+  return prisma.family.findUnique({ where: { id } });
 }
 
-// 生成唯一的 4 位数字家庭码
 async function generateFamilyCode(): Promise<string> {
-  const families = await getFamilies();
-  const existingCodes = new Set(families.map((f) => f.familyCode));
-  
-  // 尝试生成一个唯一的 4 位数字码
   for (let i = 0; i < 100; i++) {
-    const code = Math.floor(1000 + Math.random() * 9000).toString(); // 1000-9999
-    if (!existingCodes.has(code)) {
-      return code;
-    }
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    const existing = await prisma.family.findUnique({ where: { familyCode: code } });
+    if (!existing) return code;
   }
-  
-  // 极端情况下使用带字母的码
   return Math.random().toString(36).substr(2, 4).toUpperCase();
 }
 
 export async function createFamily(name: string): Promise<Family> {
-  const families = await getFamilies();
+  const existing = await prisma.family.findFirst({ where: { name: { mode: 'insensitive', equals: name } } });
+  if (existing) throw new Error('家庭名称已存在');
   
-  // 生成唯一 ID（基于时间戳 + 随机数）
-  const familyId = `family-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  
-  // 检查名称是否重复（不区分大小写）
-  if (families.some((f) => f.name.toLowerCase() === name.toLowerCase())) {
-    throw new Error('家庭名称已存在');
-  }
-  
-  // 生成家庭码
   const familyCode = await generateFamilyCode();
   
-  const family: Family = {
-    id: familyId,
-    name,
-    familyCode,
-    createdAt: new Date().toISOString(),
-  };
-  families.push(family);
-  await writeJson(FAMILIES_FILE, families);
-  return family;
+  return prisma.family.create({
+    data: { name, familyCode },
+  });
 }
 
 export async function deleteFamily(id: string): Promise<boolean> {
-  const families = await getFamilies();
-  const filtered = families.filter((f) => f.id !== id);
-  if (filtered.length === families.length) return false;
-  await writeJson(FAMILIES_FILE, filtered);
-  return true;
+  try {
+    await prisma.family.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function getFamilyByCode(code: string): Promise<Family | null> {
-  const families = await getFamilies();
-  return families.find((f) => f.familyCode === code) || null;
+  return prisma.family.findUnique({ where: { familyCode: code } });
 }
 
 // User 操作
 export async function getUsers(): Promise<User[]> {
-  return readJson<User[]>(USERS_FILE, []);
+  return prisma.user.findMany();
 }
 
 export async function getUserById(id: string): Promise<User | null> {
-  const users = await getUsers();
-  return users.find((u) => u.id === id) || null;
+  return prisma.user.findUnique({ where: { id } });
 }
 
 export async function getUserByUsername(username: string): Promise<User | null> {
-  const users = await getUsers();
-  return users.find((u) => u.username.toLowerCase() === username.toLowerCase()) || null;
+  return prisma.user.findFirst({ where: { username: { mode: 'insensitive', equals: username } } });
 }
 
 export async function getUsersByFamily(familyId: string): Promise<User[]> {
-  const users = await getUsers();
-  return users.filter((u) => u.familyId === familyId);
+  return prisma.user.findMany({ where: { familyId } });
 }
 
 export async function createUser(userData: Omit<User, 'id' | 'createdAt' | 'passwordHash'> & { password: string }): Promise<User> {
-  const users = await getUsers();
+  const existing = await prisma.user.findFirst({ where: { username: { mode: 'insensitive', equals: userData.username } } });
+  if (existing) throw new Error('用户名已存在');
   
-  // 检查用户名是否重复（全局唯一）
-  if (users.some((u) => u.username.toLowerCase() === userData.username.toLowerCase())) {
-    throw new Error('用户名已存在');
-  }
-  
-  // 检查家庭人数限制（super_admin 不受限制）
   if (userData.role !== 'super_admin') {
-    const familyUsers = users.filter((u) => u.familyId === userData.familyId && u.role !== 'super_admin');
-    const parentCount = familyUsers.filter((u) => u.role === 'parent').length;
-    const babyCount = familyUsers.filter((u) => u.role === 'baby').length;
+    const familyUsers = await prisma.user.findMany({ where: { familyId: userData.familyId } });
+    const parentCount = familyUsers.filter(u => u.role === 'parent').length;
+    const babyCount = familyUsers.filter(u => u.role === 'baby').length;
     
-    if (userData.role === 'admin') {
-      // 每个家庭只能有一个 admin
-      if (familyUsers.some((u) => u.role === 'admin')) {
-        throw new Error('该家庭已有管理员');
-      }
+    if (userData.role === 'admin' && familyUsers.some(u => u.role === 'admin')) {
+      throw new Error('该家庭已有管理员');
     }
     if (userData.role === 'parent' && parentCount >= 5) {
       throw new Error('每个家庭最多 5 位家长');
@@ -260,42 +187,32 @@ export async function createUser(userData: Omit<User, 'id' | 'createdAt' | 'pass
   }
   
   const { password, ...rest } = userData;
-  const user: User = {
-    ...rest,
-    passwordHash: hashPassword(password),
-    id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    createdAt: new Date().toISOString(),
-  };
-  users.push(user);
-  await writeJson(USERS_FILE, users);
-  return user;
+  return prisma.user.create({
+    data: {
+      ...rest,
+      passwordHash: hashPassword(password),
+    },
+  });
 }
 
 export async function updateUser(id: string, updates: Partial<User> & { password?: string }): Promise<User | null> {
-  const users = await getUsers();
-  const index = users.findIndex((u) => u.id === id);
-  if (index === -1) return null;
-  
   const updateData: any = { ...updates };
   if (updateData.password) {
     updateData.passwordHash = hashPassword(updateData.password);
     delete updateData.password;
   }
-  
-  users[index] = { ...users[index], ...updateData };
-  await writeJson(USERS_FILE, users);
-  return users[index];
+  return prisma.user.update({ where: { id }, data: updateData });
 }
 
 export async function deleteUser(id: string): Promise<boolean> {
-  const users = await getUsers();
-  const filtered = users.filter((u) => u.id !== id);
-  if (filtered.length === users.length) return false;
-  await writeJson(USERS_FILE, filtered);
-  return true;
+  try {
+    await prisma.user.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-// 通过家庭码加入家庭并创建用户
 export async function joinFamilyAndCreateUser(
   familyCode: string,
   username: string,
@@ -303,9 +220,7 @@ export async function joinFamilyAndCreateUser(
   role: 'admin' | 'parent' | 'baby'
 ): Promise<{ family: Family; user: User }> {
   const family = await getFamilyByCode(familyCode);
-  if (!family) {
-    throw new Error('家庭码不存在');
-  }
+  if (!family) throw new Error('家庭码不存在');
   
   const user = await createUser({
     familyId: family.id,
@@ -320,28 +235,38 @@ export async function joinFamilyAndCreateUser(
 
 // Prize 操作
 export async function getPrizes(familyId?: string): Promise<Prize[]> {
-  const prizes = await readJson<Prize[]>(PRIZES_FILE, []);
   if (familyId) {
-    return prizes.filter((p) => p.familyId === familyId);
+    return prisma.prize.findMany({ where: { familyId } });
   }
-  return prizes;
+  return prisma.prize.findMany();
 }
 
 export async function savePrize(prize: Prize): Promise<void> {
-  const prizes = await getPrizes();
-  const index = prizes.findIndex((p) => p.id === prize.id);
-  if (index >= 0) {
-    prizes[index] = prize;
-  } else {
-    prizes.push(prize);
-  }
-  await writeJson(PRIZES_FILE, prizes);
+  await prisma.prize.upsert({
+    where: { id: prize.id },
+    update: {
+      name: prize.name,
+      description: prize.description,
+      points: prize.points,
+      imageUrl: prize.imageUrl,
+      probability: prize.probability,
+      active: prize.active,
+    },
+    create: {
+      id: prize.id,
+      familyId: prize.familyId,
+      name: prize.name,
+      description: prize.description,
+      points: prize.points,
+      imageUrl: prize.imageUrl,
+      probability: prize.probability,
+      active: prize.active,
+    },
+  });
 }
 
 export async function deletePrize(id: string): Promise<void> {
-  const prizes = await getPrizes();
-  const filtered = prizes.filter((p) => p.id !== id);
-  await writeJson(PRIZES_FILE, filtered);
+  await prisma.prize.delete({ where: { id } });
 }
 
 // DrawRequest 操作
@@ -350,81 +275,83 @@ export async function getDrawRequests(filters?: {
   familyId?: string;
   status?: string;
 }): Promise<DrawRequest[]> {
-  const requests = await readJson<DrawRequest[]>(REQUESTS_FILE, []);
+  const where: any = {};
+  if (filters?.babyId) where.babyId = filters.babyId;
+  if (filters?.familyId) where.familyId = filters.familyId;
+  if (filters?.status) where.status = filters.status;
   
-  if (!filters) return requests;
-  
-  return requests.filter((r) => {
-    if (filters.babyId && r.babyId !== filters.babyId) return false;
-    if (filters.familyId && r.familyId !== filters.familyId) return false;
-    if (filters.status && r.status !== filters.status) return false;
-    return true;
-  });
+  return prisma.drawRequest.findMany({ where, orderBy: { createdAt: 'desc' } });
 }
 
 export async function createDrawRequest(request: Omit<DrawRequest, 'id' | 'createdAt'>): Promise<DrawRequest> {
-  const requests = await getDrawRequests();
-  const newRequest: DrawRequest = {
-    ...request,
-    id: `request-${Date.now()}`,
-    createdAt: new Date().toISOString(),
-  };
-  requests.push(newRequest);
-  await writeJson(REQUESTS_FILE, requests);
-  return newRequest;
+  return prisma.drawRequest.create({
+    data: request,
+  });
 }
 
 export async function updateDrawRequest(id: string, updates: Partial<DrawRequest>): Promise<DrawRequest | null> {
-  const requests = await getDrawRequests();
-  const index = requests.findIndex((r) => r.id === id);
-  if (index === -1) return null;
-  requests[index] = { ...requests[index], ...updates };
-  await writeJson(REQUESTS_FILE, requests);
-  return requests[index];
+  return prisma.drawRequest.update({ where: { id }, data: updates });
 }
 
 export async function deleteDrawRequest(id: string): Promise<boolean> {
-  const requests = await getDrawRequests();
-  const filtered = requests.filter((r) => r.id !== id);
-  if (filtered.length === requests.length) return false;
-  await writeJson(REQUESTS_FILE, filtered);
-  return true;
+  try {
+    await prisma.drawRequest.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // DrawRecord 操作
 export async function getDrawRecords(familyId?: string, babyId?: string, limit = 50, year?: number, month?: number): Promise<DrawRecord[]> {
-  const records = await readJson<DrawRecord[]>(RECORDS_FILE, []);
+  const where: any = {};
+  if (familyId) where.familyId = familyId;
+  if (babyId) where.babyId = babyId;
+  if (year) where.year = year;
+  if (month) where.month = month;
   
-  let filtered = records;
-  if (familyId) filtered = filtered.filter((r) => r.familyId === familyId);
-  if (babyId) filtered = filtered.filter((r) => r.babyId === babyId);
-  if (year) filtered = filtered.filter((r) => r.year === year);
-  if (month) filtered = filtered.filter((r) => r.month === month);
-  
-  return filtered
-    .sort((a, b) => new Date(b.drawnAt).getTime() - new Date(a.drawnAt).getTime())
-    .slice(0, limit);
+  return prisma.drawRecord.findMany({
+    where,
+    orderBy: { drawnAt: 'desc' },
+    take: limit,
+  });
 }
 
 export async function saveDrawRecord(record: DrawRecord): Promise<void> {
-  const records = await readJson<DrawRecord[]>(RECORDS_FILE, []);
-  records.push(record);
-  await writeJson(RECORDS_FILE, records);
+  await prisma.drawRecord.create({
+    data: {
+      familyId: record.familyId,
+      babyId: record.babyId,
+      babyName: record.babyName,
+      prizeId: record.prizeId,
+      requestId: record.requestId,
+      week: record.week,
+      month: record.month,
+      quarter: record.quarter,
+      year: record.year,
+    },
+  });
 }
 
 // Report 操作
 export async function getReports(familyId?: string): Promise<Report[]> {
-  const reports = await readJson<Report[]>(REPORTS_FILE, []);
   if (familyId) {
-    return reports.filter((r) => r.familyId === familyId);
+    return prisma.report.findMany({ where: { familyId } });
   }
-  return reports;
+  return prisma.report.findMany();
 }
 
 export async function saveReport(report: Report): Promise<void> {
-  const reports = await getReports();
-  reports.push(report);
-  await writeJson(REPORTS_FILE, reports);
+  await prisma.report.create({
+    data: {
+      familyId: report.familyId,
+      type: report.type,
+      startDate: report.startDate,
+      endDate: report.endDate,
+      totalDraws: report.totalDraws,
+      prizesJson: report.prizesJson,
+    },
+  });
 }
 
 // 辅助函数
@@ -454,21 +381,19 @@ export function getWeekEndDate(year: number, week: number): Date {
 
 // 初始化超级管理员
 export async function ensureSuperAdmin(): Promise<void> {
-  const users = await getUsers();
-  const hasSuperAdmin = users.some((u) => u.role === 'super_admin');
+  const superAdmin = await prisma.user.findFirst({ where: { role: 'super_admin' } });
   
-  if (!hasSuperAdmin) {
-    const superAdmin: User = {
-      id: 'super-admin',
-      familyId: '',
-      username: 'admin',
-      passwordHash: hashPassword('admin123'),
-      role: 'super_admin',
-      active: true,
-      createdAt: new Date().toISOString(),
-    };
-    users.push(superAdmin);
-    await writeJson(USERS_FILE, users);
+  if (!superAdmin) {
+    await prisma.user.create({
+      data: {
+        id: 'super-admin',
+        familyId: '',
+        username: 'admin',
+        passwordHash: hashPassword('admin123'),
+        role: 'super_admin',
+        active: true,
+      },
+    });
     console.log('✓ 超级管理员已创建：admin / admin123');
   }
 }

@@ -3,12 +3,36 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Family {
+  id          String   @id @default(uuid())
+  name        String
+  familyCode  String   @unique
+  createdAt   DateTime @default(now())
+  users       User[]
+  prizes      Prize[]
+  drawRequests DrawRequest[]
+  drawRecords DrawRecord[]
+}
+
+model User {
+  id           String   @id @default(uuid())
+  familyId     String
+  family       Family   @relation(fields: [familyId], references: [id])
+  username     String   @unique
+  passwordHash String
+  role         String   // super_admin, admin, parent, baby
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
 }
 
 model Prize {
   id          String   @id @default(uuid())
+  familyId    String?
+  family      Family?  @relation(fields: [familyId], references: [id])
   name        String
   description String?
   points      Int      @default(0)
@@ -21,20 +45,39 @@ model Prize {
   drawRecords DrawRecord[]
 }
 
+model DrawRequest {
+  id        String   @id @default(uuid())
+  familyId  String
+  family    Family   @relation(fields: [familyId], references: [id])
+  babyId    String
+  babyName  String
+  status    String   // pending, approved, rejected, completed
+  approvedBy String?
+  approvedByName String?
+  reason    String?
+  createdAt DateTime @default(now())
+  approvedAt DateTime?
+}
+
 model DrawRecord {
   id        String   @id @default(uuid())
+  familyId  String
+  family    Family   @relation(fields: [familyId], references: [id])
+  babyId    String
+  babyName  String
   prizeId   String
   prize     Prize    @relation(fields: [prizeId], references: [id])
+  requestId String?
   drawnAt   DateTime @default(now())
   week      Int
   month     Int
   quarter   Int
   year      Int
-  notes     String?
 }
 
 model Report {
   id        String   @id @default(uuid())
+  familyId  String?
   type      String   // weekly, monthly, quarterly, yearly
   startDate DateTime
   endDate   DateTime
