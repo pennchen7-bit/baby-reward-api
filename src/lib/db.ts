@@ -67,11 +67,11 @@ export type Report = {
   id: string;
   familyId?: string | null;
   type: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string | Date;
+  endDate: string | Date;
   totalDraws: number;
   prizesJson: string;
-  createdAt: Date;
+  createdAt: string | Date;
 };
 
 // 密码哈希（bcrypt）
