@@ -30,8 +30,8 @@ export type Prize = {
   imageUrl: string | null;
   probability: number;
   active: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 };
 
 export type DrawRequest = {
@@ -56,7 +56,7 @@ export type DrawRecord = {
   prizeName: string;
   points: number;
   requestId?: string | null;
-  drawnAt: Date;
+  drawnAt: string | Date;
   week: number;
   month: number;
   quarter: number;
@@ -317,7 +317,7 @@ export async function getDrawRecords(familyId?: string, babyId?: string, limit =
   });
 }
 
-export async function saveDrawRecord(record: DrawRecord): Promise<void> {
+export async function saveDrawRecord(record: Omit<DrawRecord, 'drawnAt'> & { drawnAt?: string | Date }): Promise<void> {
   await prisma.drawRecord.create({
     data: {
       familyId: record.familyId,
